@@ -23,7 +23,9 @@ const Signup = ({ navigation }) => {
       ]);
     },
     onError: error => {
-      Alert.alert('Signup Failed', error.message || 'Network Error');
+      console.log('=== ERROR ===', error.message);
+      console.log('Backend:', error.response?.data);
+      Alert.alert('Failed', error.message);
     },
   });
 

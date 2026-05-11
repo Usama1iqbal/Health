@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.33.190:8001';
+const BASE_URL = 'http://192.168.22.190:8001';
 
 // Error helper
 const handleError = error => {

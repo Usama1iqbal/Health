@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -19,11 +19,17 @@ import NavHomeAddNotifiProfile from '../components/NavHomeAddNotifiProfile';
 import TextinputWraper from '../components/TextinputWraper';
 
 const PatientList = ({ navigation }) => {
+  const [searchText, setSearchText] = useState('');
   const { data: patients, isLoading } = useQuery({
     queryKey: ['patients'],
     queryFn: getPatientsFromDB,
   });
 
+  // 2. filter logic add karo // serach functionality ke liye 
+  const filteredPatients =
+    patients?.filter(item =>
+      item.name.toLowerCase().includes(searchText.toLowerCase()),
+    ) || [];
   return (
     <View style={{ flex: 1, backgroundColor: '#f5f5f5' }}>
       <ScrollViewContainer>
@@ -52,6 +58,8 @@ const PatientList = ({ navigation }) => {
           <TextinputWraper
             placeholder="Search Patient..."
             icon={require('../../assests/Search.png')}
+            value={searchText}
+            onChangeText={text => setSearchText(text)}
           />
 
           <Header
@@ -68,7 +76,7 @@ const PatientList = ({ navigation }) => {
             style={{ marginTop: 50 }}
           />
         ) : patients && patients.length > 0 ? (
-          patients.map((item, index) => (
+          filteredPatients.map((item, index) => (
             <PatientListDetails
               key={index}
               patientData={item}
