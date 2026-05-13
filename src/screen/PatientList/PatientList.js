@@ -17,15 +17,25 @@ import Header from '../components/Header';
 import PatientListDetails from '../components/PatientListDetail';
 import NavHomeAddNotifiProfile from '../components/NavHomeAddNotifiProfile';
 import TextinputWraper from '../components/TextinputWraper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PatientList = ({ navigation }) => {
   const [searchText, setSearchText] = useState('');
-  const { data: patients, isLoading } = useQuery({
-    queryKey: ['patients'],
-    queryFn: getPatientsFromDB,
-  });
+  const [hospitalId, setHospitalId] = useState(null);
 
-  // 2. filter logic add karo // serach functionality ke liye 
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem('HOSPITAL_ID');
+      setHospitalId(id);
+    })();
+  }, []);
+
+  const { data: patients, isLoading } = useQuery({
+    queryKey: ['patients', hospitalId],
+    queryFn: () => getPatientsFromDB(hospitalId),
+    enabled: !!hospitalId, // hospitalId aane ke baad hi call hogi
+  });
+  // 2. filter logic add for// serach functionality
   const filteredPatients =
     patients?.filter(item =>
       item.name.toLowerCase().includes(searchText.toLowerCase()),
@@ -82,7 +92,7 @@ const PatientList = ({ navigation }) => {
               patientData={item}
               onPress={() =>
                 navigation.navigate('ViewPatient', {
-                  mpi: item.mpi, // sirf mpi pass karo
+                  mpi: item.mpi, // sirf mpi
                 })
               }
             />

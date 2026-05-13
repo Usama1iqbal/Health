@@ -82,17 +82,17 @@ const AddConsultationNotes = ({ navigation, route }) => {
     mutationFn: addVisitNote,
     onSuccess: () => {
       queryClient.invalidateQueries(['visitNotes', docId, pid]);
-      Alert.alert('Success', 'Note save ho gaya!');
+      Alert.alert('Success', 'Note save Succesfully!');
       navigation.goBack();
     },
     onError: error => {
-      Alert.alert('Error', error.message || 'Kuch ghalat hua');
+      Alert.alert('Error', error.message || 'error');
     },
   });
 
   const handleSave = () => {
     if (!noteTitle || !complaint || !diagnosis || !billAmount)
-      return Alert.alert('Error', 'Sare required fields fill karo!');
+      return Alert.alert('Error', 'Please fill all requirments!');
 
     saveNote({
       mpi: pid,
@@ -103,7 +103,7 @@ const AddConsultationNotes = ({ navigation, route }) => {
       note_details: noteDetails.trim(),
       bill_amount: parseFloat(billAmount) || 0,
       lab_name: labName || null,
-      test_names: labTests, // ← pura array
+      test_names: labTests, // ←  array
     });
   };
 

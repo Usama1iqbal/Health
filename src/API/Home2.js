@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.22.190:8001';
+const BASE_URL = 'http://192.168.246.190:8001';
 
 // Error helper
 const handleError = error => {
@@ -14,52 +14,56 @@ const handleError = error => {
   throw new Error(message);
 };
 export const getPatientDetail = async mpi => {
-  try {
-    const response = await axios.get(`${BASE_URL}/patients/${mpi}`);
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
+  const response = await axios.get(`${BASE_URL}/patients/${mpi}`);
+  return response.data;
 };
 
 export const addPatientToDB = async data => {
-  try {
-    const response = await axios.post(`${BASE_URL}/patients`, data, {
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 15000,
-    });
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
+  const response = await axios.post(`${BASE_URL}/patients`, data);
+  return response.data;
 };
 
 export const getVisitNotes = async ({ docId, pid }) => {
-  try {
-    const url = `${BASE_URL}/all-visit-notes${docId}/${pid}`;
-    console.log('Fetching notes URL:', url); // ← add karo
-    const response = await axios.get(url);
-    return response.data;
-  } catch (error) {
-    console.log('Notes error:', error.message); // ← add karo
-    handleError(error);
-  }
+  const response = await axios.get(
+    `${BASE_URL}/all-visit-notes${docId}/${pid}`,
+  );
+  return response.data;
 };
+
 export const addVisitNote = async data => {
-  try {
-    const response = await axios.post(`${BASE_URL}/visit-note-add`, data, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    return response.data;
-  } catch (error) {
-    handleError(error);
-  }
+  const response = await axios.post(`${BASE_URL}/visit-note-add`, data);
+
+  return response.data;
 };
 
 export const searchLabTest = async search_name => {
+  const response = await axios.get(
+    `${BASE_URL}/lab_test_search?search_name=${search_name}`,
+  );
+  return response.data;
+};
+
+export const getVisitNoteDetail = async note_id => {
+  const res = await axios.get(`${BASE_URL}/visit-note${note_id}`);
+  return res.data;
+};
+
+export const getLabReports = async note_id => {
+  const res = await axios.get(`${BASE_URL}/lab-reports-by-${note_id}`);
+  return res.data;
+};
+
+export const submitClaim = async payload => {
+  const response = await axios.post(`${BASE_URL}/submit-claims`, payload, {});
+  return response.data;
+};
+
+export const changeConfig = async data => {
   try {
-    const response = await axios.get(
-      `${BASE_URL}/lab_test_search?search_name=${search_name}`,
+    const response = await axios.post(
+      `${BASE_URL}/change-config-status`,
+      data,
+      {},
     );
     return response.data;
   } catch (error) {
@@ -67,24 +71,24 @@ export const searchLabTest = async search_name => {
   }
 };
 
-export const getVisitNoteDetail = async note_id => {
-  const res = await fetch(`${BASE_URL}/visit-note${note_id}`);
-  if (!res.ok) throw new Error('Note not found');
-  return res.json();
+export const sentConfig = async data => {
+  const response = await axios.post(`${BASE_URL}/sent-config-to-engine`, data);
+  return response.data;
 };
 
-export const getLabReports = async note_id => {
-  const res = await fetch(`${BASE_URL}/lab-reports-by-${note_id}`);
-  if (!res.ok) throw new Error('Lab reports not found');
-  return res.json();
+export const addHospital = async (name) => {
+  const response = await axios.post(`${BASE_URL}/add-hospital?name=${name}`);
+  return response.data;
 };
-
-export const submitClaim = async payload => {
-  const res = await fetch(`${BASE_URL}/submit-claims`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  if (!res.ok) throw new Error('Claim submit failed');
-  return res.json();
+export const allHospital = async () => {
+  const response = await axios.get(`${BASE_URL}/all-hospitals`);
+  return response.data;
+};
+export const configHistory = async () => {
+  const response = await axios.get(`${BASE_URL}/config-history`);
+  return response.data;
+};
+export const sentToEngine = async () => {
+  const response = await axios.get(`${BASE_URL}/csent-config-to-engine`);
+  return response.data;
 };

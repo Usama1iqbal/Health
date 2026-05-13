@@ -1,64 +1,34 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text, Alert, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-
-// Components imports
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 import ScrollViewContainer from '../components/ScrollViewContainer';
 import Header from '../components/Header';
 import TextinputWraper from '../components/TextinputWraper';
 import BlueButton from '../components/BlueButton';
-
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { loginAPI, getHospitals } from '../../API/Home';
-import DropdownArrow from '../components/DropdownArrow';
-
-const LoginStyle = ({ navigation }) => {
+import { loginAdminAPI } from '../../API/Home';
+const LoginAdmin = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [hospital, setHospital] = useState(null);
 
-  // useMutation
   const { mutate: handleLogin, isPending } = useMutation({
-    mutationFn: loginAPI,
+    mutationFn: loginAdminAPI,
     onSuccess: response => {
-      // user_id global mein save karo — poori app mein use hoga
-      (async () => {
-         await AsyncStorage.setItem('User_ID', response?.users_id.toString());
-        await AsyncStorage.setItem(
-          'HOSPITAL_ID',
-          response?.hospital_id.toString(),
-        );
-        console.log('User ID saved:', response?.users_id); // Terminal mein check karne ke liye
-      })();
-      navigation.navigate('PatientList');
+      navigation.navigate('AdminScreen'); 
     },
     onError: error => {
       Alert.alert('Login Failed', error.message || 'Network Error');
     },
   });
-
-  const { data: hospitalsData, isLoading } = useQuery({
-    queryKey: ['hospitals'],
-    queryFn: getHospitals,
-  });
-
-  // Transform data for Dropdown (label/value format)
-  const hospitalList =
-    hospitalsData?.map(h => ({
-      label: h.name,
-      value: h.hospital_id,
-    })) || [];
-
   return (
     <ScrollViewContainer>
       <View style={{ alignItems: 'center' }}>
         <Header
-          title="Login"
+          title="Login Admin"
           onPress={() => navigation?.goBack()}
           fontSize={25}
         />
       </View>
-
       {/* --- INPUTS SECTION --- */}
       <TextinputWraper
         placeholder="Enter your Email"
@@ -66,7 +36,6 @@ const LoginStyle = ({ navigation }) => {
         value={email}
         onChangeText={text => setEmail(text)}
       />
-
       <TextinputWraper
         placeholder="Enter your Password"
         icon={require('../../assests/Password.png')}
@@ -75,36 +44,31 @@ const LoginStyle = ({ navigation }) => {
         value={password}
         onChangeText={text => setPassword(text)}
       />
-      <DropdownArrow
-        placeholder="Select Hospital"
-        icon={require('../../assests/Logs.png')}
-        data={hospitalList}
-        value={hospital}
-        onChange={item => setHospital(item.value)}
-        loading={isLoading}
-      />
-
       {/* --- LOGIN BUTTON --- */}
       <BlueButton
         title={isPending ? 'Logging in...' : 'Sign in'}
-        onPress={() => handleLogin({ email, password, hospital_id: hospital })}
+        onPress={() => handleLogin({ email, password })} 
       />
 
       {/* --- FOOTER SECTION --- */}
-      <View style={styles.footerContainer}>
+      {/* <View style={styles.footerContainer}>
         <Text>Don’t have an account? </Text>
         <TouchableOpacity onPress={() => navigation?.navigate('Signup')}>
+
+
           <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>Sign up</Text>
         </TouchableOpacity>
-      </View>
-      <View style={styles.footerContainer}>
-        <Text>Login as admin?</Text>
-        <TouchableOpacity onPress={() => navigation?.navigate('LoginAdmin')}>
-          <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>
-            Admin Screen
-          </Text>
+
+      </View> */}
+      {/* <View style={styles.footerContainer}>
+        <Text>Login as  admin?</Text>
+        <TouchableOpacity onPress={() => navigation?.navigate('AdminScreen')}>
+
+
+          <Text style={{ color: '#2F80ED', fontWeight: 'bold' }}>Admin Screen</Text>
         </TouchableOpacity>
-      </View>
+
+      </View> */}
     </ScrollViewContainer>
   );
 };
@@ -118,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginStyle;
+export default LoginAdmin;

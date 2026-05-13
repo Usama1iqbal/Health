@@ -14,6 +14,7 @@ import Button from '../components/Button';
 import ScrollViewContainer from '../components/ScrollViewContainer';
 import { addPatientToDB } from '../../API/Home2';
 import NavHomeAddNotifiProfile from '../components/NavHomeAddNotifiProfile';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AddPatient = ({ navigation }) => {
   const [name, setName] = useState('');
@@ -63,19 +64,26 @@ const AddPatient = ({ navigation }) => {
     if (!name || !dob || !gender || !nic || !phone || !address)
       return Alert.alert('Error', 'Please fill all required fields!');
 
-    savePatient({
-      nic: nic.trim(),
-      name: name.trim(),
-      phone_no: phone.trim(),
-      gender: gender.trim(),
-      date_of_birth: dob.trim(),
-      address: address.trim(),
-      insurance_company: insurance.trim(),
-      policy_number: parseInt(policy) || 0,
-      plan_type: planType.trim(),
-    });
-  };
+    (async () => {
+      const hospitalId = await AsyncStorage.getItem('HOSPITAL_ID');
+      console.log('Hospital ID:', hospitalId);
 
+      const payload = {
+        hospital_id: parseInt(hospitalId),
+        nic: nic.trim(),
+        name: name.trim(),
+        phone_no: phone.trim(),
+        gender: gender.trim(),
+        date_of_birth: dob.trim(),
+        address: address.trim(),
+        insurance_company: insurance.trim(),
+        policy_number: parseInt(policy) || 0,
+        plan_type: planType.trim(),
+      };
+      console.log('Payload:', payload);
+      savePatient(payload);
+    })(); // 👈 () missing tha
+  };
   return (
     <>
       <ScrollViewContainer>
