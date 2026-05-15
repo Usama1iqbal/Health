@@ -1,19 +1,14 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.246.190:8001';
+const BASE_URL = 'http://192.168.237.190:8001';
 
 // export const getPatientsFromDB = async patient_id => {
 //   const response = await axios.get(`${BASE_URL}/patients/${patient_id}`);
 //   return response.data;
 // };
 
-
-
-
-
-
-export const getPatientsFromDB = async (hospitalId) => {
-  const response = await axios.get(`${BASE_URL}/patients/${hospitalId}`);
+export const getPatientsFromDB = async hospitalId => {
+  const response = await axios.get(`${BASE_URL}/all-patients/${hospitalId}`);
   return response.data;
 };
 // } catch (error) {

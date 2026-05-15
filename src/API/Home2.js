@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.246.190:8001';
+const BASE_URL = 'http://192.168.237.190:8001';
 
 // Error helper
 const handleError = error => {
@@ -76,7 +76,7 @@ export const sentConfig = async data => {
   return response.data;
 };
 
-export const addHospital = async (name) => {
+export const addHospital = async name => {
   const response = await axios.post(`${BASE_URL}/add-hospital?name=${name}`);
   return response.data;
 };

@@ -14,15 +14,23 @@ import ViewPatient from '../ViewPatient/ViewPatient';
 import ShowHospital from '../ShowHospital/ShowHospital';
 import AdminDashboard from '../AdminDashboard/AdminDashboard';
 import LoginAdmin from '../LoginAdmin/LoginAdmin';
+import Profile from '../Profile/Profile';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator
+      initialRouteName="Login"
+    >
       <Stack.Screen
         name="AdminScreen"
         component={AdminScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
         options={{ headerShown: false }}
       />
       <Stack.Screen

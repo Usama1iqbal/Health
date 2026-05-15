@@ -54,7 +54,7 @@ const NavHomeAddNotifiProfile = ({ navigation, activeTab }) => {
       </TouchableOpacity>
 
       {/* 3. Notifications */}
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.navItem}
         onPress={() => console.log('Notifi Pressed')}
       >
@@ -63,18 +63,30 @@ const NavHomeAddNotifiProfile = ({ navigation, activeTab }) => {
           style={[styles.navIconImage, { tintColor: inactiveColor }]}
         />
         <Text style={styles.navText}>Notifications</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       {/* 4. Profile */}
       <TouchableOpacity
         style={styles.navItem}
-        onPress={() => console.log('Profile Pressed')}
+        onPress={() => navigation.navigate('Profile')} // AddPatient screen par le jayega
       >
         <Image
           source={require('../../assests/Profile.png')}
-          style={[styles.navIconImage, { tintColor: inactiveColor }]}
+          style={[
+            styles.navIconImage,
+            {
+              tintColor: activeTab === 'Profile' ? activeColor : inactiveColor,
+            },
+          ]}
         />
-        <Text style={styles.navText}>Profile</Text>
+        <Text
+          style={[
+            styles.navText,
+            { color: activeTab === 'Profile' ? activeColor : inactiveColor },
+          ]}
+        >
+          Profile
+        </Text>
       </TouchableOpacity>
     </View>
   );

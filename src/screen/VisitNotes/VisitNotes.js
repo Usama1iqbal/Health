@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import ScrollViewContainer from '../components/ScrollViewContainer';
@@ -16,40 +16,50 @@ import {
 
 const ViewNotes = ({ navigation, route }) => {
   const { note_id } = route.params ?? {};
-  const [totalLabCharges, setTotalLabCharges] = useState('0');
-  const [totalBill, setTotalBill] = useState('0');
 
+  // State mein default note data se lo
+  // const [totalBill, setTotalBill] = useState(0);
+
+  // note aane ke baad automatically fill karo
+  // useEffect(() => {
+  //   if (note) {
+  //     setTotalBill(String(note.total_bill ?? '0'));
+  //   }
+  // }, [note]);
+  
   const { data: note, isLoading: noteLoading } = useQuery({
     queryKey: ['visitNote', note_id],
     queryFn: () => getVisitNoteDetail(note_id),
     enabled: !!note_id,
   });
-
+  
   const { data: labReports = [], isLoading: labLoading } = useQuery({
     queryKey: ['labReports', note_id],
     queryFn: () => getLabReports(note_id),
     enabled: !!note_id,
   });
-
+  
   const { mutate: handleSubmit, isPending: isSubmitting } = useMutation({
     mutationFn: () =>
       submitClaim({
-        vid: note?.bill_id,
+        vid: note?.note_id,
         mpi: note?.mpi,
         service_included: true,
         lab_included: labReports.length > 0,
-        total_fee: parseFloat(totalBill) || 0,
+        total_fee: parseFloat(note?.total_bill) || 0,
       }),
-    onSuccess: () => {
-      Alert.alert('Success', 'Claim submitted successfully!', [
-        { text: 'OK', onPress: () => navigation.goBack() },
-      ]);
-    },
-    onError: error => {
-      Alert.alert('Error', error.message || 'Submit failed');
-    },
-  });
+      onSuccess: () => {
+        Alert.alert('Success', 'Claim submitted successfully!', [
+          { text: 'OK', onPress: () => navigation.goBack() },
+        ]);
+      },
+      onError: error => {
+        Alert.alert('Error', error.message || 'Submit failed');
+      },
+    });
 
+  // setTotalBill(note?.total_bill ?? 0);
+    
   if (noteLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -75,7 +85,12 @@ const ViewNotes = ({ navigation, route }) => {
             },
             { label: 'Diagnosis', value: note?.dignosis ?? '-' },
             { label: 'Consultation Notes', value: note?.note_details ?? '-' },
-            { label: 'Consultation Bill', value: note?.bill_amount ?? '-' },
+            {
+              label: 'Consultation Bill',
+              value: note?.consultation_bill ?? '-',
+            },
+            // { label: 'Lab Bill', value: note?.lab_bill ?? '-' },
+            // { label: 'Total Bill', value: note?.total_bill ?? '-' },
             { label: 'Bill Status', value: note?.bill_status ?? '-' },
           ]}
         />
@@ -103,17 +118,15 @@ const ViewNotes = ({ navigation, route }) => {
 
         <TextInputField
           title="Total Lab Charges"
-          value={totalLabCharges}
-          onChangeText={val => setTotalLabCharges(val)}
+          value={String(0)}
+          editable={false} // ← uneditable
           keyboardType="numeric"
-          placeholder="Enter amount"
         />
         <TextInputField
           title="Total Bill"
-          value={totalBill}
-          onChangeText={val => setTotalBill(val)}
+          value={String(note?.total_bill ?? 0)}
+          editable={false} // ← uneditable
           keyboardType="numeric"
-          placeholder="Enter amount"
         />
 
         <View

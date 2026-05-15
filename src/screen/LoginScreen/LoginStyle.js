@@ -20,18 +20,23 @@ const LoginStyle = ({ navigation }) => {
   // useMutation
   const { mutate: handleLogin, isPending } = useMutation({
     mutationFn: loginAPI,
-    onSuccess: response => {
-      // user_id global mein save karo — poori app mein use hoga
-      (async () => {
-         await AsyncStorage.setItem('User_ID', response?.users_id.toString());
-        await AsyncStorage.setItem(
-          'HOSPITAL_ID',
-          response?.hospital_id.toString(),
-        );
-        console.log('User ID saved:', response?.users_id); // Terminal mein check karne ke liye
-      })();
+    onSuccess: async response => {
+      await AsyncStorage.setItem('DOC_ID', String(response?.users_id));
+      await AsyncStorage.setItem('HOSPITAL_ID', String(response?.hospital_id));
+      await AsyncStorage.setItem('DOC_NAME', response?.name ?? '');
+      await AsyncStorage.setItem('DOC_EMAIL', response?.email ?? '');
+      await AsyncStorage.setItem(
+        'DOC_SPECIALIZATION',
+        response?.specialization ?? '',
+      );
+      await AsyncStorage.setItem('DOC_PHONE', response?.phone_no ?? '');
+      await AsyncStorage.setItem('DOC_ABOUT', response?.about ?? '');
+      const allKeys = await AsyncStorage.getAllKeys();
+      const allData = await AsyncStorage.multiGet(allKeys);
+      console.log('AsyncStorage data:', allData);
       navigation.navigate('PatientList');
     },
+
     onError: error => {
       Alert.alert('Login Failed', error.message || 'Network Error');
     },

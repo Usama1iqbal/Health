@@ -15,7 +15,8 @@ import ScrollViewContainer from '../components/ScrollViewContainer';
 import { addPatientToDB } from '../../API/Home2';
 import NavHomeAddNotifiProfile from '../components/NavHomeAddNotifiProfile';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import SelectField from '../components/SelectField';
+// import CascadingMenu from '../components/CascadingMenu';
 const AddPatient = ({ navigation }) => {
   const [name, setName] = useState('');
   const [dob, setDob] = useState('');
@@ -69,7 +70,7 @@ const AddPatient = ({ navigation }) => {
       console.log('Hospital ID:', hospitalId);
 
       const payload = {
-        hospital_id: parseInt(hospitalId),
+        hospital_id: hospitalId,
         nic: nic.trim(),
         name: name.trim(),
         phone_no: phone.trim(),
@@ -116,11 +117,11 @@ const AddPatient = ({ navigation }) => {
             />
           )}
 
-          <TextinputField
+          <SelectField
             title="Gender"
-            placeholder="Male/Female"
+            options={['Male', 'Female']}
             value={gender}
-            onChangeText={setGender}
+            onSelect={setGender}
           />
           <TextinputField
             title="NIC"
@@ -140,11 +141,11 @@ const AddPatient = ({ navigation }) => {
             value={address}
             onChangeText={setAddress}
           />
-          <TextinputField
+          <SelectField
             title="Insurance Company"
-            placeholder="Select Company"
+            options={['Jublee', 'Insurance Companey']}
             value={insurance}
-            onChangeText={setInsurance}
+            onSelect={setInsurance}
           />
           <TextinputField
             title="Policy Number"
@@ -152,11 +153,11 @@ const AddPatient = ({ navigation }) => {
             value={policy}
             onChangeText={setPolicy}
           />
-          <TextinputField
+          <SelectField
             title="Plan Type"
-            placeholder="Enter Plan Type"
+            options={['Gold', 'Silver', 'Bronze']}
             value={planType}
-            onChangeText={setPlanType}
+            onSelect={setPlanType}
           />
 
           {isLoading ? (
@@ -172,6 +173,31 @@ const AddPatient = ({ navigation }) => {
               style={styles.saveButton}
             />
           )}
+
+          {/* <CascadingMenu
+            placeholder="Select option"
+            data={[
+              {
+                label: 'Compress to',
+                value: 'compress',
+                children: [
+                  { label: 'ZIP File', value: 'zip' },
+                  { label: '7z File', value: '7z' },
+                  { label: 'TAR File', value: 'tar' },
+                ],
+              },
+              {
+                label: 'New',
+                value: 'new',
+                children: [
+                  { label: 'Folder', value: 'folder' },
+                  { label: 'Text Document', value: 'txt' },
+                ],
+              },
+              { label: 'Properties', value: 'properties', children: [] },
+            ]}
+            onSelect={val => console.log(val)}
+          /> */}
         </View>
       </ScrollViewContainer>
       <NavHomeAddNotifiProfile navigation={navigation} activeTab="Add" />

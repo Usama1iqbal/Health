@@ -21,11 +21,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const AddConsultationNotes = ({ navigation, route }) => {
   const { pid } = route.params;
   const [docId, setDocId] = useState(null);
+  const [hospitalId, setHospitalId] = useState(null);
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem('DOC_ID');
+      const id = await AsyncStorage.getItem('user_id');
+      const hId = await AsyncStorage.getItem('HOSPITAL_ID');
       setDocId(id);
+      setHospitalId(hId);
     })();
   }, []);
 
@@ -81,7 +84,7 @@ const AddConsultationNotes = ({ navigation, route }) => {
   const { mutate: saveNote, isLoading } = useMutation({
     mutationFn: addVisitNote,
     onSuccess: () => {
-      queryClient.invalidateQueries(['visitNotes', docId, pid]);
+      queryClient.invalidateQueries(['visitNotes', docId, pid, hospitalId]);
       Alert.alert('Success', 'Note save Succesfully!');
       navigation.goBack();
     },
@@ -92,19 +95,23 @@ const AddConsultationNotes = ({ navigation, route }) => {
 
   const handleSave = () => {
     if (!noteTitle || !complaint || !diagnosis || !billAmount)
-      return Alert.alert('Error', 'Please fill all requirments!');
+      return Alert.alert('Error', 'Please fill all requirements!');
 
-    saveNote({
+    const payload = {
       mpi: pid,
       doctor_id: docId,
+      hospital_id: hospitalId,
       note_title: noteTitle.trim(),
       patient_complaint: complaint.trim(),
       dignosis: diagnosis.trim(),
       note_details: noteDetails.trim(),
       bill_amount: parseFloat(billAmount) || 0,
       lab_name: labName || null,
-      test_names: labTests, // ←  array
-    });
+      test_names: labTests.length > 0 ? labTests : null,
+    };
+
+    // Alert.alert('Payload:', JSON.stringify(payload));
+    saveNote(payload);
   };
 
   return (

@@ -36,8 +36,8 @@ const HistoryScreen = ({ navigation }) => {
         history.map((item, index) => (
           <Container
             key={index}
-            name={item.operation}
-            count={item.count}
+            name={item.hospital_name}
+            count={`Patients: ${item.add_patient_count} | Visits: ${item.add_visit_count} | Claims: ${item.add_claim_count}`}
             onPress={() => navigation.navigate('')}
           />
         ))

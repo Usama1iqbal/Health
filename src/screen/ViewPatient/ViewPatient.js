@@ -16,7 +16,7 @@ const ViewPatient = ({ navigation, route }) => {
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem('DOC_ID');
+      const id = await AsyncStorage.getItem('user_id');
       setDocId(id);
     })();
   }, []);
