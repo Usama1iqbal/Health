@@ -28,5 +28,17 @@ const AdminDashboard = ({ navigation }) => {
     </ScrollViewContainer>
   );
 };
+const styles = StyleSheet.create({
+  hospitalName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1A365D',
+  },
+  systemId: {
+    fontSize: 13,
+    color: '#6B7280',
+    marginTop: 4,
+  },
+});
 
 export default AdminDashboard;

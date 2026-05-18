@@ -52,11 +52,11 @@ const PatientList = ({ navigation }) => {
             <View style={styles.headerContent}>
               <View>
                 <Image
-                  source={require('../../assests/Profilee.png')}
+                  source={require('../../assests/Profile.png')}
                   style={styles.profilePic}
                 />
                 <Text style={styles.welcomeText}>welcome !</Text>
-                <Text style={styles.userName}>Sana</Text>
+                {/* <Text style={styles.userName}>Sana</Text> */}
               </View>
               <Image
                 source={require('../../assests/Heart.png')}

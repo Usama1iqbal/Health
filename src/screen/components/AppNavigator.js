@@ -15,17 +15,27 @@ import ShowHospital from '../ShowHospital/ShowHospital';
 import AdminDashboard from '../AdminDashboard/AdminDashboard';
 import LoginAdmin from '../LoginAdmin/LoginAdmin';
 import Profile from '../Profile/Profile';
+import LabReportView from '../LabReportView/LabReportView';
+import ShowVitals from '../ShowVitals/ShowVitals';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
   return (
-    <Stack.Navigator
-      initialRouteName="Login"
-    >
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="AdminScreen"
         component={AdminScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="LabReportView"
+        component={LabReportView}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ShowVitals"
+        component={ShowVitals}
         options={{ headerShown: false }}
       />
       <Stack.Screen

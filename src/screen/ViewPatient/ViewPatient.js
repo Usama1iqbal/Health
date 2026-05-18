@@ -16,7 +16,7 @@ const ViewPatient = ({ navigation, route }) => {
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem('user_id');
+      const id = await AsyncStorage.getItem('DOC_ID');
       setDocId(id);
     })();
   }, []);
@@ -49,6 +49,10 @@ const ViewPatient = ({ navigation, route }) => {
     <>
       <ScrollViewContainer>
         <Header title={`Patient: ${patient?.name || ''}`} fontSize={25} />
+        <Button
+          title="Show Vitals"
+          onPress={() => navigation.navigate('ShowVitals', { nic: patient?.nic, docId })}
+        />
         <Boxx
           data={[
             { label: 'Age', value: patient?.age },

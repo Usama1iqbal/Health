@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.237.190:8001';
+const BASE_URL = 'http://192.168.54.190:8001';
 
 // Error helper
 const handleError = error => {
@@ -89,6 +89,6 @@ export const configHistory = async () => {
   return response.data;
 };
 export const sentToEngine = async () => {
-  const response = await axios.get(`${BASE_URL}/csent-config-to-engine`);
+  const response = await axios.post(`${BASE_URL}/sent-config-to-engine`);
   return response.data;
 };

@@ -6,7 +6,6 @@ import {
   Alert,
   ActivityIndicator,
   TouchableOpacity,
-  FlatList,
 } from 'react-native';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import ScrollViewContainer from '../components/ScrollViewContainer';
@@ -25,7 +24,7 @@ const AddConsultationNotes = ({ navigation, route }) => {
 
   useEffect(() => {
     (async () => {
-      const id = await AsyncStorage.getItem('user_id');
+      const id = await AsyncStorage.getItem('DOC_ID');
       const hId = await AsyncStorage.getItem('HOSPITAL_ID');
       setDocId(id);
       setHospitalId(hId);
@@ -68,8 +67,8 @@ const AddConsultationNotes = ({ navigation, route }) => {
         short_name: item.short_name || null,
         component: item.component || null,
         system: item.system || null,
-        display_name: item.display_name || null, // ← add karo
-        mobile_name: item.mobile_name || null, // ← add karo
+        display_name: item.long_common_name,
+        // mobile_name: item.mobile_name || null, // ← add karo
       },
     ]);
     setLabSearch('');
@@ -85,11 +84,13 @@ const AddConsultationNotes = ({ navigation, route }) => {
     mutationFn: addVisitNote,
     onSuccess: () => {
       queryClient.invalidateQueries(['visitNotes', docId, pid, hospitalId]);
-      Alert.alert('Success', 'Note save Succesfully!');
+      Alert.alert('Success', 'Note save Successfully!');
       navigation.goBack();
     },
     onError: error => {
-      Alert.alert('Error', error.message || 'error');
+      // ✅ exact backend error dekho
+      const detail = error.response?.data?.detail;
+      Alert.alert('Error', JSON.stringify(detail) || error.message);
     },
   });
 
@@ -98,8 +99,8 @@ const AddConsultationNotes = ({ navigation, route }) => {
       return Alert.alert('Error', 'Please fill all requirements!');
 
     const payload = {
-      mpi: pid,
-      doctor_id: docId,
+      mpi: Number(pid),
+      doctor_id: Number(docId),
       hospital_id: hospitalId,
       note_title: noteTitle.trim(),
       patient_complaint: complaint.trim(),
@@ -110,7 +111,7 @@ const AddConsultationNotes = ({ navigation, route }) => {
       test_names: labTests.length > 0 ? labTests : null,
     };
 
-    // Alert.alert('Payload:', JSON.stringify(payload));
+    console.log('PAYLOAD:', JSON.stringify(payload, null, 2)); // 👈 terminal mein dekho
     saveNote(payload);
   };
 
@@ -171,22 +172,16 @@ const AddConsultationNotes = ({ navigation, route }) => {
         />
 
         {/* Search Results */}
-        {showResults && (
-          <FlatList
-            data={labResults}
-            keyExtractor={item => item.loinc_code}
-            style={{ maxHeight: 200 }}
-            nestedScrollEnabled={true}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.resultItem}
-                onPress={() => addLabTest(item)}
-              >
-                <Text style={styles.resultText}>{item.long_common_name}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        )}
+        {showResults &&
+          labResults.map(item => (
+            <TouchableOpacity
+              key={item.loinc_code}
+              style={styles.resultItem}
+              onPress={() => addLabTest(item)}
+            >
+              <Text style={styles.resultText}>{item.long_common_name}</Text>
+            </TouchableOpacity>
+          ))}
 
         {/* Added Tests */}
         {labTests.map((test, index) => (

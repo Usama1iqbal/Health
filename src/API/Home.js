@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'http://192.168.237.190:8001';
+const BASE_URL = 'http://192.168.54.190:8001';
 
 // export const getPatientsFromDB = async patient_id => {
 //   const response = await axios.get(`${BASE_URL}/patients/${patient_id}`);
@@ -107,5 +107,19 @@ export const loginAdminAPI = async ({ email, password }) => {
     password,
   });
   console.log('=== SUCCESS ===', response.data);
+  return response.data;
+};
+
+export const updateDoctor = async (doc_id, doctorData) => {
+  const response = await axios.put(
+    `${BASE_URL}/change-doctor/${doc_id}`,
+    doctorData,
+  );
+  return response.data;
+};
+
+
+export const getLabResults = async (report_id) => {
+  const response = await axios.get(`${BASE_URL}/lab-results/${report_id}`);
   return response.data;
 };

@@ -1,4 +1,4 @@
-import React, { useState ,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import ScrollViewContainer from '../components/ScrollViewContainer';
@@ -16,6 +16,7 @@ import {
 
 const ViewNotes = ({ navigation, route }) => {
   const { note_id } = route.params ?? {};
+  console.log('note_id:', note_id); // 👈 terminal mein dekho
 
   // State mein default note data se lo
   // const [totalBill, setTotalBill] = useState(0);
@@ -26,19 +27,19 @@ const ViewNotes = ({ navigation, route }) => {
   //     setTotalBill(String(note.total_bill ?? '0'));
   //   }
   // }, [note]);
-  
+
   const { data: note, isLoading: noteLoading } = useQuery({
     queryKey: ['visitNote', note_id],
     queryFn: () => getVisitNoteDetail(note_id),
     enabled: !!note_id,
   });
-  
+
   const { data: labReports = [], isLoading: labLoading } = useQuery({
     queryKey: ['labReports', note_id],
     queryFn: () => getLabReports(note_id),
     enabled: !!note_id,
   });
-  
+
   const { mutate: handleSubmit, isPending: isSubmitting } = useMutation({
     mutationFn: () =>
       submitClaim({
@@ -48,18 +49,22 @@ const ViewNotes = ({ navigation, route }) => {
         lab_included: labReports.length > 0,
         total_fee: parseFloat(note?.total_bill) || 0,
       }),
-      onSuccess: () => {
-        Alert.alert('Success', 'Claim submitted successfully!', [
-          { text: 'OK', onPress: () => navigation.goBack() },
-        ]);
-      },
-      onError: error => {
-        Alert.alert('Error', error.message || 'Submit failed');
-      },
-    });
+    onSuccess: () => {
+      // ← yahan hona chahiye, mutationFn ke baad
+      Alert.alert('Success', 'Claim submitted successfully!', [
+        { text: 'OK', onPress: () => navigation.goBack() },
+      ]);
+    },
+    onError: error => {
+      const detail = error.response?.data?.detail;
+      const msg =
+        typeof detail === 'string' ? detail : error.message || 'Submit failed';
+      Alert.alert('Error', msg);
+    },
+  });
 
   // setTotalBill(note?.total_bill ?? 0);
-    
+
   if (noteLoading) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -77,6 +82,7 @@ const ViewNotes = ({ navigation, route }) => {
           fontSize={25}
           onPress={() => navigation.goBack()}
         />
+
         <Boxx
           data={[
             {
@@ -111,6 +117,13 @@ const ViewNotes = ({ navigation, route }) => {
                 testName={`${report.lab_name} - ${report.test_name}`}
                 date={report.created_at}
                 status={report.test_status}
+                onPress={() =>
+                  navigation.navigate('LabReportView', {
+                    test_req_id: report.report_id,
+                    patient_name: note?.patient_name ?? 'Patient',
+                    test_name: report.test_name,
+                  })
+                }
               />
             ))
           )}
